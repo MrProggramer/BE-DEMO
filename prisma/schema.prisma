@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Barberos
+model Barber {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  workingHours    WorkingHour[]
+  nonWorkingDays  NonWorkingDay[]
+  appointments    Appointment[]
+  
+  @@map("barbers")
+}
+
+// Horarios de trabajo por barbero
+model WorkingHour {
+  id          String   @id @default(uuid())
+  barberId    String
+  dayOfWeek   Int      // 0=Domingo, 1=Lunes, ..., 6=Sábado
+  startTime   String   // Formato: "09:00"
+  endTime     String   // Formato: "18:00"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  barber      Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  
+  @@map("working_hours")
+  @@index([barberId, dayOfWeek])
+}
+
+// Días no laborables (vacaciones, feriados, etc.)
+model NonWorkingDay {
+  id          String   @id @default(uuid())
+  barberId    String?  // Si es null, aplica a todos los barberos
+  date        DateTime @db.Date
+  reason      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  barber      Barber?  @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  
+  @@map("non_working_days")
+  @@index([barberId, date])
+}
+
+// Servicios ofrecidos
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  duration    Int      // Duración en minutos
+  price       Float
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  appointments Appointment[]
+  
+  @@map("services")
+}
+
+// Configuración general
+model Config {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("configs")
+}
+
+// Reservas/Turnos
+model Appointment {
+  id          String   @id @default(uuid())
+  barberId    String
+  serviceId   String
+  clientName  String
+  clientEmail String?
+  clientPhone String
+  date        DateTime @db.Date
+  startTime   String   // Formato: "09:00"
+  endTime     String   // Formato: "09:30"
+  status      AppointmentStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  barber      Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  
+  @@map("appointments")
+  @@index([barberId, date])
+  @@index([date, startTime])
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
