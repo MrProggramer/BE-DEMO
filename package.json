@@ -1,7 +1,7 @@
 {
-  "name": "velabarberia-backend",
+  "name": "be-demo",
   "version": "1.0.0",
-  "description": "Backend API para sistema de reservas de barbería",
+  "description": "Backend API para sistema de reservas generica DEMO",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
