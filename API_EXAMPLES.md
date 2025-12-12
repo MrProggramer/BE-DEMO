@@ -371,52 +371,6 @@ curl -X PUT http://localhost:3000/api/config/business_phone \
   }'
 ```
 
-## 🎬 Inicialización
-
-### Ver estado de inicialización
-
-```bash
-curl http://localhost:3000/api/init/status
-
-# Response:
-{
-  "isInitialized": true,
-  "counts": {
-    "barbers": 2,
-    "services": 5,
-    "workingHours": 12,
-    "configs": 8,
-    "nonWorkingDays": 5,
-    "appointments": 1
-  },
-  "message": "Base de datos ya inicializada"
-}
-```
-
-### Inicializar base de datos (solo una vez)
-
-```bash
-curl -X POST http://localhost:3000/api/init/seed \
-  -H "Content-Type: application/json" \
-  -d '{
-    "secret": "tu_secreto_configurado_en_env"
-  }'
-
-# Response:
-{
-  "message": "✅ Base de datos inicializada correctamente",
-  "summary": {
-    "barbers": 2,
-    "workingHours": 12,
-    "services": 5,
-    "configs": 8,
-    "nonWorkingDays": 5,
-    "appointments": 1
-  },
-  "warning": "⚠️ Este endpoint ahora está bloqueado y no puede volver a usarse"
-}
-```
-
 ## 🚨 Manejo de Errores
 
 ### Error 400 - Bad Request

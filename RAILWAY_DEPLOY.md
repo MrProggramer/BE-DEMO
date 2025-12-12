@@ -30,12 +30,11 @@ En el servicio de tu aplicación (no en la base de datos):
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 PORT=3000
 NODE_ENV=production
-INIT_SECRET=tu_secreto_muy_seguro_aqui_cambiar
+ALLOWED_ORIGINS=https://tudominio.com,https://www.tudominio.com
 ```
 
 **Importante**: 
 - `DATABASE_URL` se vincula automáticamente con la base de datos PostgreSQL
-- Cambia `INIT_SECRET` por un valor seguro y único
 
 ### 5. Deploy Automático
 
@@ -88,20 +87,9 @@ railway link
 railway run npx prisma db push
 ```
 
-### 8. Inicializar Datos
+### 8. Crear datos manualmente
 
-Usa Postman, Insomnia, o curl para inicializar la base de datos:
-
-```bash
-curl -X POST https://tu-app.up.railway.app/api/init/seed \
-  -H "Content-Type: application/json" \
-  -d '{"secret": "tu_secreto_muy_seguro_aqui_cambiar"}'
-```
-
-**⚠️ IMPORTANTE**: 
-- Este endpoint solo funciona UNA VEZ
-- Después de ejecutarlo, quedará bloqueado
-- Asegúrate de usar el mismo `secret` que configuraste en las variables de entorno
+Usa los endpoints de la API para crear profesionales, servicios, horarios y configuraciones según tus necesidades.
 
 ### 9. Verificar que todo funciona
 
@@ -114,9 +102,6 @@ curl https://tu-app.up.railway.app/api/barbers
 
 # Listar servicios
 curl https://tu-app.up.railway.app/api/services
-
-# Ver status de inicialización
-curl https://tu-app.up.railway.app/api/init/status
 ```
 
 ## 🔧 Troubleshooting
@@ -147,9 +132,6 @@ DATABASE_URL="<railway-database-url>" npx prisma db push
 railway run npx prisma db push
 ```
 
-### Error 403 en /api/init/seed
-
-Verifica que el `secret` en el body de la petición coincida exactamente con la variable de entorno `INIT_SECRET`.
 
 ## 🚀 Updates y Re-deploys
 
@@ -185,11 +167,10 @@ Railway ofrece:
 
 Para producción:
 
-1. ✅ Cambia `INIT_SECRET` por un valor complejo
-2. ✅ No compartas las variables de entorno públicamente
-3. ✅ Usa HTTPS (Railway lo provee automáticamente)
-4. ✅ Considera agregar autenticación JWT para los endpoints sensibles
-5. ✅ Elimina el endpoint `/api/init/seed` después de usarlo (opcional)
+1. ✅ No compartas las variables de entorno públicamente
+2. ✅ Usa HTTPS (Railway lo provee automáticamente)
+3. ✅ Considera agregar autenticación JWT para los endpoints sensibles
+4. ✅ Configura CORS adecuadamente mediante `ALLOWED_ORIGINS`
 
 ## 📱 Conexión con Frontend
 

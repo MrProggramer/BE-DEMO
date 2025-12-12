@@ -39,9 +39,6 @@ PORT=3000
 # Entorno
 NODE_ENV=development
 
-# Secret para inicialización (opcional)
-INIT_SECRET=tu_secreto_seguro_aqui
-
 # CORS - Tus dominios permitidos (separados por comas)
 ALLOWED_ORIGINS=http://localhost:3000,https://tudominio.com,https://www.tudominio.com
 ```

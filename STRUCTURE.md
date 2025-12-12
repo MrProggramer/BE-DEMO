@@ -14,7 +14,6 @@ BE-velabarberia/
 │   │   ├── appointments.js        # Endpoints de reservas/turnos
 │   │   ├── barbers.js             # Endpoints de barberos
 │   │   ├── config.js              # Endpoints de configuración
-│   │   ├── init.js                # Endpoint de inicialización (un solo uso)
 │   │   ├── nonWorkingDays.js      # Endpoints de días no laborables
 │   │   ├── services.js            # Endpoints de servicios
 │   │   └── workingHours.js        # Endpoints de horarios de trabajo
@@ -55,7 +54,6 @@ Cada router maneja un recurso específico con operaciones CRUD:
 - `appointments.js` - Gestión de turnos + validaciones + slots disponibles
 - `barbers.js` - Gestión de barberos
 - `config.js` - Configuración general
-- `init.js` - Inicialización de datos (protegido)
 - `nonWorkingDays.js` - Días de cierre
 - `services.js` - Catálogo de servicios
 - `workingHours.js` - Horarios por barbero
@@ -123,15 +121,11 @@ npm run prisma:studio    # UI visual de la BD
 | `/api/non-working-days` | ✅ | ✅ | ✅ | ❌ | ✅ |
 | `/api/appointments` | ✅ | ✅ | ✅ | ✅ | ✅ |
 | `/api/config` | ✅ | ✅ | ✅ | ❌ | ✅ |
-| `/api/init` | ✅ | ✅* | ❌ | ❌ | ❌ |
-
-*Solo una vez, requiere autenticación
 
 ## 🔐 Seguridad Implementada
 
 - Validación de entrada en todos los endpoints
 - Prevención de conflictos en turnos
-- Endpoint de inicialización protegido con secret
 - Uso de prepared statements (Prisma previene SQL injection)
 - CORS configurado
 

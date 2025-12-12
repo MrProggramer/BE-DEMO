@@ -47,7 +47,6 @@ Crear un archivo `.env` en la raíz del proyecto:
 DATABASE_URL="postgresql://user:password@localhost:5432/tu_base_de_datos?schema=public"
 PORT=3000
 NODE_ENV=development
-INIT_SECRET=tu_secreto_seguro_aqui
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://tudominio.com
 ```
 
@@ -64,19 +63,7 @@ npm run prisma:push
 npm run prisma:migrate
 ```
 
-### 5. Inicializar datos de ejemplo
-
-Hacer una petición POST al endpoint de inicialización:
-
-```bash
-curl -X POST http://localhost:3000/api/init/seed \
-  -H "Content-Type: application/json" \
-  -d '{"secret": "tu_secreto_seguro_aqui"}'
-```
-
-⚠️ **Nota**: Este endpoint solo puede usarse UNA VEZ y quedará bloqueado después.
-
-### 6. Iniciar el servidor
+### 5. Iniciar el servidor
 
 ```bash
 # Desarrollo (con hot-reload)
@@ -171,13 +158,6 @@ PUT    /api/config/:key      - Actualizar configuración
 DELETE /api/config/:key      - Eliminar configuración
 ```
 
-### Inicialización (Un solo uso)
-
-```
-GET    /api/init/status      - Ver estado de inicialización
-POST   /api/init/seed        - Inicializar datos (requiere secret)
-```
-
 ## 🎯 Validaciones Automáticas
 
 El sistema valida automáticamente:
@@ -188,17 +168,6 @@ El sistema valida automáticamente:
 4. ✅ No hay superposición con otras citas
 5. ✅ El servicio existe y está activo
 
-## 📊 Datos Iniciales (Demo)
-
-Al inicializar, se crean datos de ejemplo:
-
-- **2 Profesionales**: Ejemplos con información de contacto
-- **Horarios**: Lunes a Viernes 9:00-18:00, Sábados 9:00-14:00
-- **5 Servicios**: Ejemplos con diferentes duraciones y precios
-- **Configuraciones**: Parámetros de ejemplo para el negocio
-- **Feriados**: Ejemplos de días no laborables
-
-> Estos datos son solo para demostración. Puedes eliminarlos y crear tus propios datos según tu negocio.
 
 ## 🚂 Deploy en Railway
 
@@ -216,7 +185,6 @@ En el panel de Railway, agregar:
 DATABASE_URL=<se genera automáticamente al agregar PostgreSQL>
 PORT=3000
 NODE_ENV=production
-INIT_SECRET=<tu_secreto_seguro>
 ALLOWED_ORIGINS=https://tudominio.com,https://www.tudominio.com
 ```
 
@@ -234,9 +202,9 @@ Después del primer deploy, ejecutar en la terminal de Railway:
 npx prisma db push
 ```
 
-### 5. Inicializar datos
+### 5. Crear datos manualmente
 
-Hacer una petición POST al endpoint de inicialización usando la URL de Railway.
+Usa los endpoints de la API para crear profesionales, servicios, horarios y configuraciones según tus necesidades.
 
 ## 🛠️ Comandos Útiles
 
@@ -289,8 +257,6 @@ curl -X PATCH http://localhost:3000/api/appointments/<appointment-uuid>/status \
 
 ## 🔐 Seguridad
 
-- El endpoint de inicialización está protegido con un secret
-- Solo puede ejecutarse una vez
 - En producción, usar variables de entorno seguras
 - Validar todos los inputs en el frontend
 - Configurar CORS adecuadamente mediante `ALLOWED_ORIGINS`
@@ -307,7 +273,7 @@ Este sistema es genérico y puede adaptarse para:
 
 Para personalizar:
 1. Modifica los nombres de los modelos en `prisma/schema.prisma` si lo deseas
-2. Ajusta los datos iniciales según tu negocio
+2. Crea tus propios datos usando los endpoints de la API
 3. Configura los dominios permitidos en `ALLOWED_ORIGINS`
 4. Personaliza los mensajes y validaciones según tus necesidades
 

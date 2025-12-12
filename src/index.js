@@ -7,12 +7,17 @@ import appointmentsRouter from './routes/appointments.js';
 import configRouter from './routes/config.js';
 import workingHoursRouter from './routes/workingHours.js';
 import nonWorkingDaysRouter from './routes/nonWorkingDays.js';
-import initRouter from './routes/init.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Log de configuración al iniciar
+console.log('🔧 Configuration:');
+console.log(`   PORT: ${PORT}`);
+console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
+console.log(`   DATABASE_URL: ${process.env.DATABASE_URL ? '✅ Set' : '❌ Not set'}`);
 
 // Configuración de CORS - Dominios permitidos redeploy
 // Puedes configurar tus propios dominios mediante la variable de entorno ALLOWED_ORIGINS
@@ -32,12 +37,12 @@ const originalOrigins = [
   'https://www.velabarberia.com',
 ];
 
-// Combinar dominios: primero los del .env, luego los por defecto
+// Combinar dominios: primero los del .env, luego los por defecto, luego los originales
 const envOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
   : [];
 
-const allowedOrigins = [...envOrigins, ...defaultOrigins];
+const allowedOrigins = [...envOrigins, ...defaultOrigins, ...originalOrigins];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -86,7 +91,6 @@ app.use('/api/appointments', appointmentsRouter);
 app.use('/api/config', configRouter);
 app.use('/api/working-hours', workingHoursRouter);
 app.use('/api/non-working-days', nonWorkingDaysRouter);
-app.use('/api/init', initRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -102,9 +106,25 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-app.listen(PORT, () => {
+// Manejo de errores no capturados
+process.on('unhandledRejection', (error) => {
+  console.error('❌ Unhandled Rejection:', error);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  process.exit(1);
+});
+
+// Iniciar servidor - escuchar en 0.0.0.0 para Railway
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`✅ Server is ready to accept connections`);
+  console.log(`🌐 Listening on http://0.0.0.0:${PORT}`);
+}).on('error', (error) => {
+  console.error('❌ Error starting server:', error);
+  process.exit(1);
 });
 
 
