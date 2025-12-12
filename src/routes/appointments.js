@@ -139,9 +139,7 @@ router.post('/', async (req, res, next) => {
     if (!clientName || (typeof clientName === 'string' && clientName.trim() === '')) {
       missingFields.push('clientName');
     }
-    if (!clientPhone || (typeof clientPhone === 'string' && clientPhone.trim() === '')) {
-      missingFields.push('clientPhone');
-    }
+    // clientPhone es opcional, no se valida
     if (!date || (typeof date === 'string' && date.trim() === '')) {
       missingFields.push('date');
     }
@@ -185,17 +183,22 @@ router.post('/', async (req, res, next) => {
     }
     
     // Crear la cita
+    // Normalizar clientPhone: si está vacío o es solo espacios, guardar como null
+    const normalizedClientPhone = clientPhone && typeof clientPhone === 'string' && clientPhone.trim() !== '' 
+      ? clientPhone.trim() 
+      : null;
+    
     const appointment = await prisma.appointment.create({
       data: {
         barberId,
         serviceId,
         clientName,
-        clientEmail,
-        clientPhone,
+        clientEmail: clientEmail || null,
+        clientPhone: normalizedClientPhone,
         date: appointmentDate,
         startTime,
         endTime,
-        notes
+        notes: notes || null
       },
       include: {
         barber: {

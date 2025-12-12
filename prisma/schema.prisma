@@ -94,7 +94,7 @@ model Appointment {
   serviceId   String
   clientName  String
   clientEmail String?
-  clientPhone String
+  clientPhone String?
   date        DateTime @db.Date
   startTime   String   // Formato: "09:00"
   endTime     String   // Formato: "09:30"
