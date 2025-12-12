@@ -7,13 +7,14 @@ import appointmentsRouter from './routes/appointments.js';
 import configRouter from './routes/config.js';
 import workingHoursRouter from './routes/workingHours.js';
 import nonWorkingDaysRouter from './routes/nonWorkingDays.js';
+import initRouter from './routes/init.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuración de CORS - Dominios permitidos
+// Configuración de CORS - Dominios permitidos redeploy
 // Puedes configurar tus propios dominios mediante la variable de entorno ALLOWED_ORIGINS
 // Formato: ALLOWED_ORIGINS=http://localhost:3000,https://tudominio.com
 const defaultOrigins = [
@@ -85,6 +86,7 @@ app.use('/api/appointments', appointmentsRouter);
 app.use('/api/config', configRouter);
 app.use('/api/working-hours', workingHoursRouter);
 app.use('/api/non-working-days', nonWorkingDaysRouter);
+app.use('/api/init', initRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
