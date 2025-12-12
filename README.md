@@ -1,10 +1,12 @@
-# Vela Barbería - Backend API
+# Sistema de Gestión de Turnos - Backend API (Demo)
 
-Backend para sistema de reservas de turnos de barbería, construido con Node.js, Express, Prisma y PostgreSQL.
+Backend genérico para sistema de reservas y gestión de turnos, construido con Node.js, Express, Prisma y PostgreSQL.
+
+> **Nota**: Este es un proyecto demo que puede ser adaptado para diferentes tipos de negocios que requieren gestión de citas/turnos (barberías, clínicas, consultorios, salones, etc.)
 
 ## 🚀 Características
 
-- **Gestión de Barberos**: CRUD completo con información de contacto
+- **Gestión de Profesionales**: CRUD completo con información de contacto
 - **Horarios de Trabajo**: Configuración flexible por día de la semana
 - **Días No Laborables**: Gestión de vacaciones, feriados y días especiales
 - **Servicios**: Catálogo de servicios con precios y duraciones
@@ -14,7 +16,7 @@ Backend para sistema de reservas de turnos de barbería, construido con Node.js,
   - Consulta de slots disponibles
   - Estados de cita (pendiente, confirmada, cancelada, completada)
 - **Configuración General**: Sistema de key-value para configuraciones del negocio
-- **Escalabilidad**: Preparado para hasta 4 barberos
+- **Escalable**: Preparado para múltiples profesionales
 
 ## 📋 Requisitos Previos
 
@@ -28,7 +30,7 @@ Backend para sistema de reservas de turnos de barbería, construido con Node.js,
 
 ```bash
 git clone <repository-url>
-cd BE-velabarberia
+cd BE-DEMO
 ```
 
 ### 2. Instalar dependencias
@@ -42,10 +44,11 @@ npm install
 Crear un archivo `.env` en la raíz del proyecto:
 
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/velabarberia?schema=public"
+DATABASE_URL="postgresql://user:password@localhost:5432/tu_base_de_datos?schema=public"
 PORT=3000
 NODE_ENV=development
 INIT_SECRET=tu_secreto_seguro_aqui
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://tudominio.com
 ```
 
 ### 4. Configurar base de datos
@@ -89,12 +92,14 @@ El servidor estará disponible en `http://localhost:3000`
 
 ### Modelos Principales
 
-- **Barber**: Información de barberos
+- **Barber**: Información de profesionales/proveedores de servicio
 - **WorkingHour**: Horarios de trabajo por día de la semana
 - **NonWorkingDay**: Días no laborables (feriados, vacaciones)
 - **Service**: Servicios ofrecidos con precios y duración
 - **Appointment**: Reservas/turnos
 - **Config**: Configuraciones generales del sistema
+
+> **Nota**: Aunque el modelo se llama "Barber", puede representar cualquier tipo de profesional (médicos, estilistas, consultores, etc.)
 
 ## 🔌 Endpoints de la API
 
@@ -105,14 +110,14 @@ GET /              - Información de la API
 GET /health        - Health check
 ```
 
-### Barberos
+### Profesionales (Barbers)
 
 ```
-GET    /api/barbers           - Listar barberos activos
-GET    /api/barbers/:id       - Obtener un barbero
-POST   /api/barbers           - Crear barbero
-PUT    /api/barbers/:id       - Actualizar barbero
-DELETE /api/barbers/:id       - Desactivar barbero
+GET    /api/barbers           - Listar profesionales activos
+GET    /api/barbers/:id       - Obtener un profesional
+POST   /api/barbers           - Crear profesional
+PUT    /api/barbers/:id       - Actualizar profesional
+DELETE /api/barbers/:id       - Desactivar profesional
 ```
 
 ### Servicios
@@ -129,7 +134,7 @@ DELETE /api/services/:id      - Desactivar servicio
 
 ```
 GET    /api/working-hours                    - Listar horarios (filtro: ?barberId=xxx)
-GET    /api/working-hours/barber/:barberId   - Horarios de un barbero
+GET    /api/working-hours/barber/:barberId   - Horarios de un profesional
 POST   /api/working-hours                    - Crear horario
 PUT    /api/working-hours/:id                - Actualizar horario
 DELETE /api/working-hours/:id                - Eliminar horario
@@ -177,26 +182,23 @@ POST   /api/init/seed        - Inicializar datos (requiere secret)
 
 El sistema valida automáticamente:
 
-1. ✅ El barbero existe y está activo
+1. ✅ El profesional existe y está activo
 2. ✅ No es un día no laborable (feriado/vacación)
-3. ✅ El horario está dentro de las horas de trabajo del barbero
+3. ✅ El horario está dentro de las horas de trabajo del profesional
 4. ✅ No hay superposición con otras citas
 5. ✅ El servicio existe y está activo
 
-## 📊 Datos Iniciales
+## 📊 Datos Iniciales (Demo)
 
-Al inicializar, se crean:
+Al inicializar, se crean datos de ejemplo:
 
-- **2 Barberos**: Carlos Martínez y Javier López
+- **2 Profesionales**: Ejemplos con información de contacto
 - **Horarios**: Lunes a Viernes 9:00-18:00, Sábados 9:00-14:00
-- **5 Servicios**: 
-  - Corte de Cabello ($5000, 30min)
-  - Corte + Barba ($7500, 45min)
-  - Afeitado Clásico ($4000, 30min)
-  - Corte Niño ($3500, 20min)
-  - Corte Premium ($9000, 60min)
-- **Configuraciones**: Información del negocio y parámetros de reserva
-- **Feriados**: Principales feriados argentinos
+- **5 Servicios**: Ejemplos con diferentes duraciones y precios
+- **Configuraciones**: Parámetros de ejemplo para el negocio
+- **Feriados**: Ejemplos de días no laborables
+
+> Estos datos son solo para demostración. Puedes eliminarlos y crear tus propios datos según tu negocio.
 
 ## 🚂 Deploy en Railway
 
@@ -215,6 +217,7 @@ DATABASE_URL=<se genera automáticamente al agregar PostgreSQL>
 PORT=3000
 NODE_ENV=production
 INIT_SECRET=<tu_secreto_seguro>
+ALLOWED_ORIGINS=https://tudominio.com,https://www.tudominio.com
 ```
 
 ### 3. Conectar repositorio
@@ -266,7 +269,7 @@ curl -X POST http://localhost:3000/api/appointments \
     "clientEmail": "juan@example.com",
     "date": "2024-12-15",
     "startTime": "10:00",
-    "notes": "Primera vez"
+    "notes": "Notas adicionales"
   }'
 ```
 
@@ -290,6 +293,23 @@ curl -X PATCH http://localhost:3000/api/appointments/<appointment-uuid>/status \
 - Solo puede ejecutarse una vez
 - En producción, usar variables de entorno seguras
 - Validar todos los inputs en el frontend
+- Configurar CORS adecuadamente mediante `ALLOWED_ORIGINS`
+
+## 🎨 Personalización
+
+Este sistema es genérico y puede adaptarse para:
+
+- **Barberías y Salones**: Gestión de turnos para cortes y servicios de belleza
+- **Clínicas Médicas**: Reservas de consultas médicas
+- **Consultorios**: Turnos para profesionales independientes
+- **Servicios Técnicos**: Agendamiento de servicios a domicilio
+- **Cualquier negocio con citas**: Adaptable según necesidades
+
+Para personalizar:
+1. Modifica los nombres de los modelos en `prisma/schema.prisma` si lo deseas
+2. Ajusta los datos iniciales según tu negocio
+3. Configura los dominios permitidos en `ALLOWED_ORIGINS`
+4. Personaliza los mensajes y validaciones según tus necesidades
 
 ## 🤝 Contribuir
 
@@ -303,11 +323,8 @@ curl -X PATCH http://localhost:3000/api/appointments/<appointment-uuid>/status \
 
 MIT License - ver archivo LICENSE para más detalles
 
-## 👥 Contacto
-
-Vela Barbería - info@velabarberia.com
-
 ---
 
-Desarrollado con ❤️ para Vela Barbería
+**Sistema de Gestión de Turnos - Demo Project**
 
+Este es un proyecto de demostración que puede ser adaptado y personalizado según tus necesidades específicas.
