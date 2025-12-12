@@ -128,9 +128,31 @@ router.post('/', async (req, res, next) => {
     } = req.body;
     
     // Validaciones básicas
-    if (!barberId || !serviceId || !clientName || !clientPhone || !date || !startTime) {
+    const missingFields = [];
+    
+    if (!barberId || (typeof barberId === 'string' && barberId.trim() === '')) {
+      missingFields.push('barberId');
+    }
+    if (!serviceId || (typeof serviceId === 'string' && serviceId.trim() === '')) {
+      missingFields.push('serviceId');
+    }
+    if (!clientName || (typeof clientName === 'string' && clientName.trim() === '')) {
+      missingFields.push('clientName');
+    }
+    if (!clientPhone || (typeof clientPhone === 'string' && clientPhone.trim() === '')) {
+      missingFields.push('clientPhone');
+    }
+    if (!date || (typeof date === 'string' && date.trim() === '')) {
+      missingFields.push('date');
+    }
+    if (!startTime || (typeof startTime === 'string' && startTime.trim() === '')) {
+      missingFields.push('startTime');
+    }
+    
+    if (missingFields.length > 0) {
       return res.status(400).json({ 
-        error: 'BarberId, serviceId, clientName, clientPhone, date y startTime son requeridos' 
+        error: `Los siguientes campos son requeridos: ${missingFields.join(', ')}`,
+        missingFields
       });
     }
     
